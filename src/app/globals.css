@@ -1,26 +1,123 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Brand palette */
+  --color-navy: #0B1A2F;
+  --color-navy-deep: #0A0A0A;
+  --color-gold: #C9A24B;
+  --color-gold-light: #F4D27A;
+  --color-teal: #1FA8B8;
+  --color-teal-light: #2BD4E8;
+  --color-cream: #F4EFE6;
+
+  /* Neumorphic shadow (navy surface) */
+  --shadow-neo: 8px 8px 16px #06101c, -8px -8px 16px #102844;
+  --shadow-neo-inset: inset 8px 8px 16px #06101c, inset -8px -8px 16px #102844;
+
+  /* Claymorphic shadow */
+  --shadow-clay: inset 0 -8px 16px rgba(0,0,0,.25), 0 12px 24px rgba(0,0,0,.35);
+
+  /* Glassmorphic shadow */
+  --shadow-glass: 0 8px 32px rgba(0,0,0,.37);
+
+  /* Typography */
+  --font-heading: var(--font-cormorant);
+  --font-body: var(--font-dm-sans);
+
+  /* Easing */
+  --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ── Base ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--color-navy-deep);
+  color: var(--color-cream);
+  font-family: var(--font-body, system-ui, sans-serif);
+  -webkit-font-smoothing: antialiased;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ── Gradient utilities ───────────────────────────────── */
+.gradient-gold {
+  background: linear-gradient(135deg, #C9A24B 0%, #F4D27A 100%);
+}
+.gradient-teal {
+  background: linear-gradient(135deg, #1FA8B8 0%, #2BD4E8 100%);
+}
+.gradient-gold-text {
+  background: linear-gradient(135deg, #C9A24B 0%, #F4D27A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.gradient-teal-text {
+  background: linear-gradient(135deg, #1FA8B8 0%, #2BD4E8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Glass card ───────────────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: var(--shadow-glass);
+}
+
+/* ── Neumorphic ───────────────────────────────────────── */
+.neo {
+  background: var(--color-navy);
+  box-shadow: var(--shadow-neo);
+}
+.neo-inset {
+  background: var(--color-navy);
+  box-shadow: var(--shadow-neo-inset);
+}
+
+/* ── Claymorphic ──────────────────────────────────────── */
+.clay {
+  box-shadow: var(--shadow-clay);
+  border-radius: 1.5rem;
+}
+
+/* ── Section spacing ─────────────────────────────────── */
+.section-pad {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+}
+@media (min-width: 768px) {
+  .section-pad {
+    padding-top: 8rem;
+    padding-bottom: 8rem;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ── Focus visible ────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #C9A24B;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ── Reduced motion ───────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Scrollbar ────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0B1A2F; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #C9A24B, #1FA8B8);
+  border-radius: 3px;
 }
