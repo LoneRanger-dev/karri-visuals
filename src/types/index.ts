@@ -12,7 +12,6 @@ export interface PortfolioItem {
   title: string;
   cast: string;
   category: string;
-  thumbnail: string;
 }
 
 export interface Testimonial {

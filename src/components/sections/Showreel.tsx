@@ -3,13 +3,21 @@
 import { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { Play } from "lucide-react";
-import Image from "next/image";
 import { InstagramIcon } from "@/components/ui/SocialIcons";
 import { portfolio } from "@/lib/data";
 import type { PortfolioItem } from "@/types";
 import Lightbox from "@/components/ui/Lightbox";
 import TiltCard from "@/components/ui/TiltCard";
 import LightSweep from "@/components/three/LightSweep";
+
+const ACCENTS = [
+  "from-teal/25 via-navy to-navy-deep",
+  "from-gold/20 via-navy to-navy-deep",
+  "from-teal/15 via-navy-deep to-navy",
+  "from-gold/15 via-navy-deep to-navy",
+  "from-teal/30 via-navy-deep to-navy",
+  "from-gold/25 via-navy to-navy-deep",
+] as const;
 
 function PortfolioCard({
   item,
@@ -23,6 +31,11 @@ function PortfolioCard({
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.1 });
   const [hovered, setHovered] = useState(false);
+  const [imgError, setImgError] = useState(false);
+
+  // Thumbnail is always /img/thumbs/<reelId>.jpg — fall back to gradient if missing
+  const thumbSrc = `/img/thumbs/${item.reel}.jpg`;
+  const accent = ACCENTS[index % ACCENTS.length];
 
   return (
     <motion.div
@@ -43,19 +56,32 @@ function PortfolioCard({
           role="button"
           aria-label={`Watch: ${item.title}`}
         >
-          {/* Thumbnail photo */}
-          <Image
-            src={item.thumbnail}
-            alt={item.title}
-            fill
-            className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          />
+          {/* Real cover image — gradient fallback when file is missing */}
+          {!imgError ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={thumbSrc}
+              alt=""
+              aria-hidden="true"
+              onError={() => setImgError(true)}
+              className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
+            />
+          ) : (
+            <div className={`absolute inset-0 bg-gradient-to-br ${accent}`}>
+              <div
+                className="absolute inset-0 opacity-[0.04]"
+                style={{
+                  backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
+                  backgroundSize: "20px 20px",
+                }}
+              />
+            </div>
+          )}
 
-          {/* Permanent dark scrim so text is always readable */}
+          {/* Dark scrim — ensures text is readable over any image */}
           <div className="absolute inset-0 bg-gradient-to-t from-navy-deep/95 via-navy-deep/50 to-navy-deep/10" />
 
-          {/* Hover brightness boost */}
+          {/* Hover glow */}
           <motion.div
             className="absolute inset-0 bg-gradient-to-br from-gold/10 to-teal/5"
             animate={{ opacity: hovered ? 1 : 0 }}
