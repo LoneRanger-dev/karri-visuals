@@ -3,22 +3,13 @@
 import { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { Play } from "lucide-react";
+import Image from "next/image";
 import { InstagramIcon } from "@/components/ui/SocialIcons";
 import { portfolio } from "@/lib/data";
 import type { PortfolioItem } from "@/types";
 import Lightbox from "@/components/ui/Lightbox";
 import TiltCard from "@/components/ui/TiltCard";
 import LightSweep from "@/components/three/LightSweep";
-
-// Cycling accent gradients so cards have visual variety without thumbnails
-const ACCENTS = [
-  "from-teal/25 via-navy to-navy-deep",
-  "from-gold/20 via-navy to-navy-deep",
-  "from-teal/15 via-navy-deep to-navy",
-  "from-gold/15 via-navy-deep to-navy",
-  "from-teal/30 via-navy-deep to-navy",
-  "from-gold/25 via-navy to-navy-deep",
-] as const;
 
 function PortfolioCard({
   item,
@@ -32,8 +23,6 @@ function PortfolioCard({
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.1 });
   const [hovered, setHovered] = useState(false);
-
-  const accent = ACCENTS[index % ACCENTS.length];
 
   return (
     <motion.div
@@ -54,20 +43,19 @@ function PortfolioCard({
           role="button"
           aria-label={`Watch: ${item.title}`}
         >
-          {/* Gradient background */}
-          <div className={`absolute inset-0 bg-gradient-to-br ${accent} transition-opacity duration-300`} />
-
-          {/* Subtle dot-grid texture */}
-          <div
-            className="absolute inset-0 opacity-[0.04]"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
-              backgroundSize: "20px 20px",
-            }}
+          {/* Thumbnail photo */}
+          <Image
+            src={item.thumbnail}
+            alt={item.title}
+            fill
+            className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
 
-          {/* Hover glow */}
+          {/* Permanent dark scrim so text is always readable */}
+          <div className="absolute inset-0 bg-gradient-to-t from-navy-deep/95 via-navy-deep/50 to-navy-deep/10" />
+
+          {/* Hover brightness boost */}
           <motion.div
             className="absolute inset-0 bg-gradient-to-br from-gold/10 to-teal/5"
             animate={{ opacity: hovered ? 1 : 0 }}
@@ -82,27 +70,27 @@ function PortfolioCard({
           </div>
 
           {/* Instagram icon — top right */}
-          <div className="absolute top-3 right-3 z-10 opacity-30 group-hover:opacity-60 transition-opacity">
+          <div className="absolute top-3 right-3 z-10 opacity-40 group-hover:opacity-80 transition-opacity">
             <InstagramIcon size={16} className="text-cream" />
           </div>
 
           {/* Play button — centred */}
           <div className="absolute inset-0 flex items-center justify-center z-10">
             <motion.div
-              animate={{ scale: hovered ? 1.12 : 1, opacity: hovered ? 1 : 0.75 }}
+              animate={{ scale: hovered ? 1.12 : 1, opacity: hovered ? 1 : 0.8 }}
               transition={{ duration: 0.2 }}
-              className="w-14 h-14 glass rounded-full flex items-center justify-center border border-gold/40"
+              className="w-14 h-14 rounded-full flex items-center justify-center border border-gold/60 bg-navy-deep/50 backdrop-blur-sm"
             >
               <Play size={20} className="text-gold fill-gold ml-1" />
             </motion.div>
           </div>
 
           {/* Meta overlay — bottom */}
-          <div className="absolute bottom-0 left-0 right-0 z-10 p-4 bg-gradient-to-t from-navy-deep/95 via-navy-deep/70 to-transparent">
-            <h3 className="text-cream font-heading font-semibold text-[15px] leading-snug">
+          <div className="absolute bottom-0 left-0 right-0 z-10 p-4">
+            <h3 className="text-cream font-heading font-semibold text-[15px] leading-snug drop-shadow-lg">
               {item.title}
             </h3>
-            <p className="text-cream/50 text-[11px] mt-1 leading-snug">{item.cast}</p>
+            <p className="text-cream/60 text-[11px] mt-1 leading-snug">{item.cast}</p>
           </div>
         </article>
       </TiltCard>
